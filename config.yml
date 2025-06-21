@@ -1,0 +1,8 @@
+tickers: [VTI, IEFA, GLD, VNQ, BND, BTC-USD]
+weekly_buy: 100
+risk_window: 63
+sigma_method: garch
+slip_cap_bp: 35
+report_path: reports/latest.html
+db_path: portfolio.db
+currency: CHF
