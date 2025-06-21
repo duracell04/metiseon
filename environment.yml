@@ -7,9 +7,11 @@ dependencies:
   - pandas>=2.2
   - numpy
   - yfinance>=0.2
-  - alpha_vantage
-  - fredapi
   - matplotlib
   - arch
   - requests-cache
   - pytest
+  - pip
+  - pip:
+      - alpha_vantage
+      - fredapi
