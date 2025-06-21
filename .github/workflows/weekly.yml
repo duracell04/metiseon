@@ -1,0 +1,19 @@
+name: Weekly Trade
+
+on:
+  schedule:
+    - cron: '15 6 * * 5'
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: environment.yml
+          environment-name: metiseon
+          auto-activate-base: false
+      - name: Execute trade
+        shell: bash -l {0}
+        run: python run.py trade --budget 100

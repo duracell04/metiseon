@@ -1,0 +1,15 @@
+name: metiseon
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - duckdb>=0.10
+  - pandas>=2.2
+  - numpy
+  - yfinance>=0.2
+  - alpha_vantage
+  - fredapi
+  - matplotlib
+  - arch
+  - requests-cache
+  - pytest
