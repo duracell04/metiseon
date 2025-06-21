@@ -6,12 +6,12 @@ dependencies:
   - duckdb>=0.10
   - pandas>=2.2
   - numpy
-  - yfinance>=0.2
   - matplotlib
-  - arch
   - requests-cache
   - pytest
   - pip
   - pip:
+      - yfinance>=0.2
+      - arch
       - alpha_vantage
       - fredapi
