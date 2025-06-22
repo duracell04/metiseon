@@ -17,6 +17,7 @@ import yaml
 from src import allocator, async_data, ledger, risk, score
 
 FEE_BP = 12.0  # fixed commission in basis points
+PIT_LAG_DAYS = 45  # backtest point-in-time lag for fundamentals
 
 
 def load_config(path: str = "config.yml") -> dict:
@@ -78,6 +79,7 @@ def run_backtest(args: argparse.Namespace, cfg: dict) -> None:
     end = args.end
     tickers = cfg.get("tickers", [])
     prices, fundamentals = asyncio.run(pull_data(tickers, start, end))
+    fundamentals = fundamentals.sort_values("date")
     adv10 = prices.xs("volume", level=1, axis=1).rolling(10).mean()
     book = ledger.Ledger(cfg.get("db_path", "portfolio.db"))
     nav_hist: list[tuple[datetime, float]] = []
@@ -88,7 +90,14 @@ def run_backtest(args: argparse.Namespace, cfg: dict) -> None:
             continue
         if date.weekday() != 4:  # weekly on Friday
             continue
-        scores = score.apply_scores(fundamentals)
+        f = (
+            fundamentals[fundamentals["date"] <= date - timedelta(days=PIT_LAG_DAYS)]
+            .drop_duplicates("ticker", keep="last")
+            .set_index("ticker")
+        )
+        if f.empty:
+            continue
+        scores = score.apply_scores(f)
         sigma = latest_sigma(prices, date, cfg.get("sigma_method", "garch"), int(cfg.get("risk_window", 63)))
         best = allocator.pick_asset(scores, sigma, last)
         if not best:
@@ -113,12 +122,18 @@ def run_trade(args: argparse.Namespace, cfg: dict) -> None:
     start = (datetime.utcnow() - timedelta(days=365)).date().isoformat()
     tickers = cfg.get("tickers", [])
     prices, fundamentals = asyncio.run(pull_data(tickers, start, end))
+    fundamentals = fundamentals.sort_values("date")
     adv10 = prices.xs("volume", level=1, axis=1).rolling(10).mean()
     book = ledger.Ledger(cfg.get("db_path", "portfolio.db"))
     nav = book.nav()
     last = book.last_ticker()
     today = prices.index[-1]
-    scores = score.apply_scores(fundamentals)
+    f = (
+        fundamentals[fundamentals["date"] <= today - timedelta(days=PIT_LAG_DAYS)]
+        .drop_duplicates("ticker", keep="last")
+        .set_index("ticker")
+    )
+    scores = score.apply_scores(f)
     sigma = latest_sigma(prices, today, cfg.get("sigma_method", "garch"), int(cfg.get("risk_window", 63)))
     best = allocator.pick_asset(scores, sigma, last)
     if not best:
