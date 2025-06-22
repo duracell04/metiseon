@@ -85,3 +85,11 @@ def cvar(returns: pd.Series, level: float = 0.95) -> float:
         return float("nan")
 
     return float(-tail.mean())
+
+def slipped_cost(qty: float, adv: float) -> float:
+    """Almgren-Chriss square-root impact in decimal fraction (e.g., 0.001 = 10bp).
+    cost = 0.001 * sqrt(qty / adv)
+    """
+    if adv <= 0:
+        return 0.0
+    return 0.001 * (qty / adv) ** 0.5
