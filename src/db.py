@@ -27,4 +27,7 @@ CREATE TABLE IF NOT EXISTS positions (
 
 def connect(path: str) -> duckdb.DuckDBPyConnection:
     """Return a connection to the portfolio database."""
-    pass
+    con = duckdb.connect(path)
+    con.execute("PRAGMA journal_mode='wal'")
+    con.execute(SCHEMA_SQL)
+    return con
