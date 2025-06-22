@@ -2,26 +2,49 @@
 
 from __future__ import annotations
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 import pandas as pd
 
 
-def select_asset(scores: pd.Series, sigma: pd.Series, last_winner: str | None = None) -> str | None:
-    """Select the asset to trade."""
-    pass
+def pick_asset(scores: pd.Series, sigma: pd.Series, last_winner: str | None = None) -> str | None:
+    """Return the ticker with the highest score passing the risk filter."""
+
+    candidates = scores.index
+    if last_winner is not None and last_winner in candidates:
+        candidates = candidates.drop(last_winner)
+
+    risk_gate = sigma.loc[candidates] <= sigma.median()
+    filtered = scores.loc[candidates][risk_gate]
+    if filtered.empty:
+        return None
+
+    max_score = filtered.max()
+    best = filtered[filtered == max_score]
+    if len(best) > 1:
+        sig_sub = sigma[best.index]
+        return sig_sub.idxmin()
+
+    return best.idxmax()
 
 
-def order_quantity(price: float, cash: float) -> Decimal:
-    """Round cash to units based on price."""
-    pass
+def size_trade(price: float, cash: float) -> Decimal:
+    """Size the trade in units rounded to four decimals."""
+
+    if price <= 0:
+        return Decimal("0")
+
+    qty = Decimal(str(cash)) / Decimal(str(price))
+    return qty.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
 
-def slippage_bp(quantity: Decimal, adv10: float) -> float:
-    """Return slippage in basis points."""
-    pass
+def decision_block(quantity: Decimal, adv10: float, fee_bp: float, cap_bp: float) -> bool:
+    """Return ``True`` if total cost from fee and slippage is acceptable."""
 
+    if adv10 <= 0:
+        slip_bp = 0.0
+    else:
+        slip_decimal = 0.001 * ((float(quantity) / adv10) ** 0.5)
+        slip_bp = slip_decimal * 10000
 
-def should_trade(fee_bp: float, slip_bp: float, cap_bp: float) -> bool:
-    """Check if total trading cost is below the cap."""
-    pass
+    return fee_bp + slip_bp <= cap_bp
