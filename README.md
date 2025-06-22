@@ -1,200 +1,211 @@
-# Metiseon MVP — Technical Specification (v0.2)
+# Metiseon MVP — Quant-Native Robo-Allocator (v0.2)
 
-A **single‑script**, deterministic robo‑allocator demonstrator.  
-Public data only, zero infra cost, mathematically explicit.  
-Everything here runs on a laptop and a free GitHub runner.
+*“Wisdom without mathematics is guesswork;  
+mathematics without liquidity is theory.”*
+
+The Metiseon prototype is a **one-script**, self-verifiable robo-allocator that lives entirely on free data, a DuckDB file, and ~80 MB of open-source libraries.  
+It is not a toy factor screen; it is a **closed-form capital-engine** that:
+
+* represents your portfolio as a **quantum-state currency vector**  
+* scores issuers on **economic durability** & **under-pricing**  
+* sizes orders under an explicit **risk–liquidity budget**  
+* prints performance as **real carry-clean α** across six markets.
+
+Copy → paste → run. No cloud, no secrets, no vendor lock-in.
 
 ---
 
-## 0  Table of Contents
-
-1. Scope & Guard‑Rails  
-2. Quick Start (copy–paste)  
-3. Data Model & Lineage  
-4. Quant Engine  
-  4.1  Durability‑Lite Factor $D_i$  
-  4.2  Risk Model $\sigma_i, \text{CVaR}_{95}$  
-  4.3  Asset Filter & Tie‑Break  
-  4.4  Capital‑Injection Model  
-  4.5  Execution & Slippage  
+## 0 ▐  Table of Contents
+1. Scope & Guard-Rails  
+2. Quick Start  
+3. Data Lineage & Schema  
+4. Economic Engine  
+   - 4.1 Quantum-State Currency  
+   - 4.2 Durability & Value Factor  
+   - 4.3 Dynamic Risk Surface  
+   - 4.4 Liquidity & Slippage  
+   - 4.5 Allocator & Capital Flow  
 5. Performance Accounting  
-  5.1  Nominal NAV  
-  5.2  Real Carry‑Adjusted $\alpha$  
-  5.3  Attribution Layout  
-6. Repository Topology  
-7. YAML Config Reference  
-8. Dependency Foot‑Print  
+6. Repository Blueprint  
+7. config.yaml Cheatsheet  
+8. Dependencies  
 9. Extensibility Hooks  
-10. Mathematical Glossary  
-11. Disclaimer  
+10. Mathematical Appendix  
+11. Disclaimer
 
 ---
 
-## 1  Scope & Boundaries
+## 1 ▐  Scope & Guard-Rails
 
-| Included in MVP                              | Explicitly **out‑of‑scope**             |
-| -------------------------------------------- | --------------------------------------- |
-| • 6 tickers (5 ETFs + BTC spot)              | Leverage, options, shorting             |
-| • Free data (Yahoo, FRED, AlphaVantage demo) | Paid feeds, real‑time execution         |
-| • Weekly cron, linear or %‑NAV inflow        | Minute bars, macro‑HMM regime switching |
-| • DuckDB ledger + static HTML report         | Quantum CVaR, GUI dashboards, licences  |
+| **Included** (MVP)                               | **Excluded** (v0.2)               |
+|--------------------------------------------------|-----------------------------------|
+| 6 liquid markets (VTI, IEFA, GLD, VNQ, BND, BTC) | Options, leverage, shorting       |
+| Free data: Yahoo OHLCV, FRED, AlphaVantage demo  | Paid feeds (Refinitiv, FMP)       |
+| Weekly cron; fixed or %-of-NAV cash injection    | Intraday fills, latency arbitrage |
+| GARCH(1,1) σ + CVaR₉₉ tail risk                  | EVT, Student-t GARCH (hook)       |
+| WAL-mode DuckDB ledger + HTML equity curve       | UI dashboards, on-chain notarisation |
 
 ---
 
-## 2  Quick Start (15 min)
+## 2 ▐  Quick Start ≈ 12 min
 
 ```bash
-# 1 – clone & install (Conda ≤ 85 MB)
-git clone https://github.com/<YOUR-USER>/metiseon.git
+git clone https://github.com/<YOU>/metiseon.git
 cd metiseon
 conda env create -f environment.yml -n metiseon
 conda activate metiseon
 
-# 2 – 10‑year vectorised back‑test (< 40 s)
+# 10-year vectorised back-test  (<40 s on GH runner)
 python run.py backtest --start 2015-01-01 --end today
 
-# 3 – Simulate weekly CHF 100 buy
-python run.py trade --budget 100   # or --pct 0.01
+# One live paper trade (CHF 100 injection)
+python run.py trade --budget 100          # or --pct 0.01
 ```
 
-**Artifacts:**  
-- `portfolio.db`  
-- `reports/latest.html` (equity curve + attribution)
+Artifacts
+
+* `portfolio.db` — immutable ledger (DuckDB WAL)  
+* `reports/latest.html` — equity curve + attribution  
 
 ---
 
-## 3  Data Model & Integrity
+## 3 ▐  Data Lineage & Schema
 
-All tables live in a **single WAL‑mode DuckDB** file; nightly snapshots can be committed via DVC (SHA‑256 pin).
+All tables co-habit **one** DuckDB file; nightly snapshots are DVC-pinned (SHA-256).
 
-| Table          | Columns (types)                                                            | Source            | Update lag      | QC checks                   |
-| -------------- | -------------------------------------------------------------------------- | ----------------- | --------------- | --------------------------- |
-| `prices`       | date, ticker, adj\_close, volume                                           | Yahoo             | daily 00:05 UTC | missing → linear fill ≤ 1 d |
-| `fundamentals` | date, ticker, roe, debt\_equity, profit\_margin, rd\_to\_rev, insider\_own | AlphaVantage demo | weekly          | drop rows with any NaN      |
-| `benchmarks`   | date, cpi, sofr                                                            | FRED              | monthly/ daily  | NaN fwd‑fill ≤ 5 d          |
-| `trades`       | ts, ticker, qty, price, fee                                                | internal          | on trade        | primary key (`ts`,`ticker`) |
-| `positions`    | ts, ticker, qty, cost\_basis, nav                                          | derived           | on trade        | DUCKDB CHECKs               |
+| table          | key cols                                          | feed & lag        | QA rule               |
+|----------------|---------------------------------------------------|-------------------|-----------------------|
+| `prices`       | date, ticker, adj_close, volume                   | Yahoo EOD (+0 d)  | linear fill ≤ 1 day   |
+| `fundamentals` | date, ticker, roe, debt_eq, margin, rd%, insider  | AV demo (+3–7 d)  | drop any NaN          |
+| `benchmarks`   | date, cpi, sofr, vix, chfusd                      | FRED monthly/daily| fwd-fill CPI ≤ 30 d   |
+| `trades`       | ts, ticker, qty, price, fee_bps                   | internal          | PK (ts,ticker)        |
+| `positions`    | ts, ticker, qty, cost, nav                        | derived           | DUCKDB CHECKs         |
 
-*Async pull*: tickers fetched concurrently via `asyncio` + `run_in_executor`; 5× speed‑up vs serial.
-
----
-
-## 4  Quantitative Engine
-
-### 4.1  Durability‑Lite Factor $D_i$
-
-Piece‑wise deterministic with **interaction penalty**:
-
-$$
-\begin{aligned}
-D_i &= 25 
-  + 20\,\mathbb 1_{\text{ROE}>12\%}
-  + 15\,\mathbb 1_{D/E<1}
-  + 15\,\mathbb 1_{PM>10\%}
-  + 10\,\mathbb 1_{\text{Insider}>2\%}
-  + 15\,\mathbb 1_{R\&D/Rev>5\%} \\\\
-  &\quad - 10\,\mathbb 1_{(D/E>1)\land(\text{Insider}<1\%)} \tag{Cross‑factor penalty}
-\end{aligned}
-$$
-
-Clamped to $[0,100]$.
-
-### 4.2  Risk Metrics
-
-* **Dynamic volatility**: GARCH(1,1) with daily update  
-  $\sigma_{i,t}^2 = \omega + \alpha\,\varepsilon_{i,t-1}^2 + \beta\,\sigma_{i,t-1}^2$  
-  fitted over last 252 d (ARCH package, no display).  
-  Crisis overlay: if VIX$_t>30$ multiply $\sigma_{i,t}$ by 1.25.
-
-* **FX‑beta adjustment** (reporting currency CHF):  
-  $\beta^{\text{FX}}_{i}=\frac{\operatorname{Cov}(r_i, r_{\text{CHFUSD}})}{\operatorname{Var}(r_{\text{CHFUSD}})}$  
-  NAVs are re‑expressed: $\tilde r_i = r_i - \beta^{\text{FX}}_i r_{\text{CHFUSD}}$.
-
-* **Tail risk (optional)**: empirical $\text{CVaR}_{95}$ used only for reporting.
-
-### 4.3  Asset Filter
-
-1. Exclude last‑week winner.
-2. Risk gate: $\sigma_{i,t} \le \operatorname{median}_j(\sigma_{j,t})$.
-3. Select $ i^* = \arg\max D_i$.
-4. Tie → minimal $\sigma_{i}$.
-
-### 4.4  Capital‑Injection Model
-
-Fixed or proportional cash flow
-
-$$
-\text{Cash}_t = \begin{cases}
-B,& \text{fixed}\; (\text{default }B=100\,\text{CHF})\\[4pt]
-p\,\text{NAV}_{t^-},& \text{percentage mode (e.g. }p=0.01)\end{cases}
-$$
-
-Quantity (Decimal, 4 dp):  
-$q_t = \operatorname{round_{0.0001}}\!\Bigl(\tfrac{\text{Cash}_t}{P_{i^*,t}}\Bigr)$
-
-### 4.5  Execution & Slippage
-
-*Fee* ≈ 12 bp fixed.  *Market impact* (square‑root):  
-$\text{Slip}_{i} = 0.001 \bigl( \tfrac{q_t}{\text{ADV}_{10,i}} \bigr)^{1/2}$  
-Trade skipped if total cost > 35 bp.
+**Async ingestion**: `asyncio.gather` + `run_in_executor` → 5× speed-up vs serial HTTP.
 
 ---
 
-## 5  Performance Accounting
+## 4 ▐  Economic Engine
 
-### 5.1 Nominal NAV
+### 4.1 Quantum-State Currency
 
-$ \text{NAV}_t=\sum_i q_{i,t}\,P_{i,t}$  
-Dividend‑adjusted total‑return prices used (Yahoo `AdjClose`).
+```
+V_t = (CHF_t, USD_t, EUR_t, BTC_t, XAU_t …)
+```
 
-### 5.2 Real, Carry‑Adjusted $\alpha$
+Collapsed to a reporting numéraire via
 
-$ \alpha^{\text{real}}_{T}=\frac{1+R_T}{1+\pi_T}-1- R_{f,T}-C^{\text{carry}}_{T}$
+```
+NAV_t = Σ_i  V_{i,t} · FX_{i→CHF,t}
+```
 
-- ETFs & BTC → $C^{\text{carry}}=0$.
-- CPI lag 1 month; SOFR daily.
+All sizing rules are `%·NAV`; the code scales from CHF 500 to CHF 500 M **unchanged**.
 
-### 5.3 Attribution Table (weekly)
+### 4.2 Durability & Value Factor
 
-|Ticker|$D$|Entry CHF|Exit CHF|Return %|Fee bp|Slip bp|PnL CHF|
+```
+D_i = 25
+    +20·1{ROE>12%}
+    +15·1{D/E<1}
+    +15·1{Margin>10%}
+    +10·1{InsiderOwn>2%}
+    +15·1{R&D/Rev>5%}
+    −10·1{D/E>1 ∧ InsiderOwn<1%}
+```
+
+*Score clamp*: `D_i ∈ [0,100]`
+
+*Under-pricing overlay*:  
+Dividend-yield percentile > 70 → +5 bonus pts.
+
+### 4.3 Dynamic Risk Surface
+
+* **σᵢ,t** — GARCH(1,1) conditional vol (252 d), `arch` pkg  
+* **Crisis overlay**: if **VIX > 30** ⇒ σ × 1.25  
+* **CVaR₉₉** — empirical tail (report only)  
+* **Risk gate**: keep assets with σ ≤ median(σ_universe)
+
+### 4.4 Liquidity & Slippage
+
+```
+fee_bps     = 12
+impact_bps  = 100 * sqrt(q_notional / ADV10)
+slippage_bp = max(10, impact_bps)        # 10 bp floor
+trade_skip  = fee_bps + slippage_bp > cfg.slip_cap_bp
+```
+
+### 4.5 Allocator & Capital Flow
+
+```python
+if cfg.weekly_buy:
+    cash = Decimal(cfg.weekly_buy)
+else:                  # proportional mode
+    cash = Decimal(cfg.weekly_pct) * nav
+
+qty = round(cash / price, 4)    # 4 dp fractional ETFs
+```
+
+**Selection pipeline**
+
+1. drop `last_ticker`  
+2. drop σ > median(σ)  
+3. arg-max `D_i`  
+4. tie → lower σ  
 
 ---
 
-## 6  Repository Topology (only real files)
+## 5 ▐  Performance Accounting
 
-| Path                           | Purpose                                  |
-| ------------------------------ | ---------------------------------------- |
-| `run.py`                       | CLI: `backtest`, `trade`                 |
-| `src/data.py`                  | Async fetch + cache (requests‑cache)     |
-| `src/score.py`                 | Durability calculations                  |
-| `src/risk.py`                  | GARCH volatility, FX‑beta, CVaR          |
-| `src/allocator.py`             | Select asset, size order, slippage check |
-| `src/db.py`                    | DuckDB helper (WAL, .parquet)            |
-| `tests/*`                      | Pytest quick sanity (~20 s)              |
-| `.github/workflows/ci.yml`     | Lint + tests                             |
-| `.github/workflows/weekly.yml` | Fri 06:15 UTC cron trade                 |
+| layer           | formula                                               | note                    |
+|-----------------|-------------------------------------------------------|-------------------------|
+| **nominal P/L** | `NAV_t = Σ q_i · P_i`                                 |                         |
+| **real excess** | `α_real = ((1+R_T)/(1+π_T)) − 1 − R_f,T − C_carry`    | carry = 0 for ETFs/BTC  |
+| CPI lag 1 m     | SOFR strip daily                                      |                         |
+
+Weekly HTML shows NAV curve + table:
+
+`| Ticker | D | Entry CHF | Exit CHF | Δ% | Fee bp | Slip bp | PnL CHF |`
 
 ---
 
-## 7  YAML Configuration
+## 6 ▐  Repository Blueprint
+
+| path                           | role                                |
+|--------------------------------|-------------------------------------|
+| `run.py`                       | CLI (`backtest`, `trade`)           |
+| `src/async_data.py`            | concurrent Yahoo / AV / FRED fetch  |
+| `src/score.py`                 | Durability + dividend bonus         |
+| `src/risk.py`                  | GARCH σ, CVaR, FX-beta              |
+| `src/allocator.py`             | pick + size + skip cost             |
+| `src/ledger.py`                | DuckDB WAL, NAV calc                |
+| `tests/`                       | pytest sanity (< 20 s)              |
+| `.github/workflows/ci.yml`     | lint + tests                        |
+| `.github/workflows/weekly.yml` | Fri 06:15 UTC auto-trade            |
+
+---
+
+## 7 ▐  config.yaml Cheatsheet
 
 ```yaml
-tickers: [VTI, IEFA, GLD, VNQ, BND, BTC-USD]
-weekly_buy: 100         # Fixed mode (CHF)
-#weekly_pct: 0.01       # Proportional mode (1 % NAV) — uncomment to use
-risk_window: 63
-sigma_method: garch     # or "std"
-slip_cap_bp: 35         # Skip order if cost > cap (basis points)
-report_path: reports/latest.html
-db_path: portfolio.db
-currency: CHF
+tickers:        [VTI, IEFA, GLD, VNQ, BND, BTC-USD]
+
+# choose ONE of the two cash-flow modes
+weekly_buy:     100        # fixed CHF
+#weekly_pct:    0.01       # 1 % of NAV
+
+risk_window:    63
+sigma_method:   garch      # or "std"
+slip_cap_bp:    35
+report_path:    reports/latest.html
+db_path:        portfolio.db
+currency:       CHF
 ```
 
 ---
 
-## 8  Dependency Foot‑Print (Conda)
+## 8 ▐  Dependencies
 
-```
+```shell
 python=3.11
 duckdb>=0.10
 pandas>=2.2
@@ -202,41 +213,47 @@ numpy
 yfinance>=0.2
 alpha_vantage
 fredapi
-matplotlib
-arch                # GARCH
+arch
 requests-cache
+matplotlib
 pytest
 ```
 
-Cold install < 85 MB; back‑test < 40 s on GitHub runner.
+*Cold install < 85 MB • back-test < 40 s on GH-runner*
 
 ---
 
-## 9  Extensibility Hooks
+## 9 ▐  Extensibility Hooks
 
-- **risk.py** → swap in EVT‑CVaR or Student‑t GARCH.
-- **score.py** → plug Bayesian regression (`sklearn`) weights.
-- **allocator.py** → expand to top‑N basket, Kelly sizing.
-- **data.py** → add paid feed fallback (FMP, Refinitiv).
-
----
-
-## 10  Mathematical Glossary
-
-| Symbol         | Definition                          |
-| -------------- | ----------------------------------- |
-| $r_{i,t}$      | Log return of asset $i$ on day $t$  |
-| $\sigma_{i,t}$ | Conditional volatility from GARCH   |
-| $D_i$          | Durability‑Lite score (0‑100)       |
-| $q_{i,t}$      | Units held post‑trade               |
-| $P_{i,t}$      | Total‑return price                  |
-| $R_T$          | Cumulative nominal portfolio return |
-| $\pi_T$        | CPI inflation over $[0,T]$          |
+| where          | drop-in idea                   |
+|----------------|-------------------------------|
+| `risk.py`      | EVT-CVaR, Student-t GARCH     |
+| `score.py`     | Bayesian ridge factor weight  |
+| `allocator.py` | top-N basket, Kelly sizing    |
+| `async_data`   | paid feed fallback (Refinitiv)|
 
 ---
 
-## 11  Disclaimer
+## 10 ▐  Mathematical Appendix
 
-Prototype code released under MIT licence.  
-No warranty, no investment advice.
+| symbol  | meaning                                 |
+|---------|-----------------------------------------|
+| `V_t`   | currency-state vector at time t         |
+| `NAV_t` | Σ state × FX → CHF                      |
+| `D_i`   | durability-lite score 0-100             |
+| `σᵢ,t`  | GARCH(1,1) conditional vol (annualised) |
+| `CVaR₉₉`| mean of worst 1 % daily P/L             |
+| `qᵢ,t`  | units of asset _i_ held after trade t   |
+| `Pᵢ,t`  | total-return price (adj close)          |
+| `R_T`   | cumulative nominal return of portfolio |
+| `π_T`   | CPI inflation over [0,T]               |
+| `α_real`| real carry-clean alpha                 |
 
+---
+
+## 11 ▐  Disclaimer
+
+Prototype code released under **MIT Licence**.  
+No warranty, no investment advice. Use entirely at your own risk.
+
+<!-- END OF README -->
