@@ -30,7 +30,7 @@ def garch_sigma(prices: pd.Series, denom_series: pd.Series) -> pd.Series:
         return pd.Series(index=prices.index, dtype=float)
 
     scale = 100.0
-    model = arch_model(r * scale, p=1, q=1, mean="zero", vol="Garch", rescale=False)
+    model = arch_model(r * scale, p=1, q=1, mean="zero", vol="GARCH", rescale=False)
     try:
         res = model.fit(disp="off")
     except Exception:
@@ -40,7 +40,9 @@ def garch_sigma(prices: pd.Series, denom_series: pd.Series) -> pd.Series:
     return sigma.reindex(prices.index)
 
 
-def realised_sigma(prices: pd.Series, window: int = 63, denom_series: pd.Series | None = None) -> pd.Series:
+def realised_sigma(
+    prices: pd.Series, window: int = 63, denom_series: pd.Series | None = None
+) -> pd.Series:
     """Compute historical volatility from a price series.
 
     Parameters
@@ -91,10 +93,11 @@ def cvar(returns: pd.Series, level: float = 0.95) -> float:
 
     return float(-tail.mean())
 
+
 def slipped_cost(qty: float, adv: float) -> float:
     """Almgren-Chriss square-root impact in decimal fraction (e.g., 0.001 = 10bp).
     cost = 0.001 * sqrt(qty / adv)
     """
     if adv <= 0:
         return 0.0
-    return 0.001 * (qty / adv) ** 0.5
+    return float(0.001 * (qty / adv) ** 0.5)

@@ -37,7 +37,14 @@ def _fx_rate(sym: str, as_of: date) -> float:
     if sym == "USD":
         return 1.0
     pair = f"{sym}USD=X"
-    df = yf.download(pair, start=as_of - timedelta(days=7), end=as_of + timedelta(days=1), progress=False, auto_adjust=True, threads=False)
+    df = yf.download(
+        pair,
+        start=as_of - timedelta(days=7),
+        end=as_of + timedelta(days=1),
+        progress=False,
+        auto_adjust=True,
+        threads=False,
+    )
     if df.empty:
         return float("nan")
     return float(df["Adj Close"].iloc[-1])
@@ -71,7 +78,8 @@ def fetch_meo_components(as_of: date) -> Tuple[pd.DataFrame, float]:
         rows.append({"symbol": "XAG", "mc_native": mc, "fx_usd": 1.0, "mc_usd": mc})
 
     rows.extend(
-        {"symbol": k, "mc_native": v, "fx_usd": 1.0, "mc_usd": v} for k, v in _crypto_caps(as_of).items()
+        {"symbol": k, "mc_native": v, "fx_usd": 1.0, "mc_usd": v}
+        for k, v in _crypto_caps(as_of).items()
     )
 
     df = pd.DataFrame(rows).set_index("symbol")

@@ -7,7 +7,9 @@ from decimal import Decimal, ROUND_HALF_UP
 import pandas as pd
 
 
-def pick_asset(scores: pd.Series, sigma: pd.Series, last_winner: str | None = None) -> str | None:
+def pick_asset(
+    scores: pd.Series, sigma: pd.Series, last_winner: str | None = None
+) -> str | None:
     """Return the ticker with the highest score passing the risk filter."""
 
     candidates = scores.index
@@ -23,9 +25,9 @@ def pick_asset(scores: pd.Series, sigma: pd.Series, last_winner: str | None = No
     best = filtered[filtered == max_score]
     if len(best) > 1:
         sig_sub = sigma[best.index]
-        return sig_sub.idxmin()
+        return str(sig_sub.idxmin())
 
-    return best.idxmax()
+    return str(best.idxmax())
 
 
 def size_trade(price_usd: float, budget_meo: Decimal, meo_usd: float) -> Decimal:
@@ -38,7 +40,9 @@ def size_trade(price_usd: float, budget_meo: Decimal, meo_usd: float) -> Decimal
     return qty.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
 
-def decision_block(quantity: Decimal, adv10: float, fee_bp: float, cap_bp: float) -> bool:
+def decision_block(
+    quantity: Decimal, adv10: float, fee_bp: float, cap_bp: float
+) -> bool:
     """Return ``True`` if total cost from fee and slippage is acceptable."""
 
     if adv10 <= 0:
