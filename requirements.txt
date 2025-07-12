@@ -1,0 +1,14 @@
+numpy
+pandas>=2.2
+duckdb>=0.10
+matplotlib
+requests-cache
+yfinance>=0.2
+arch
+alpha_vantage
+fredapi
+pytest
+statsmodels
+scipy
+mypy
+black

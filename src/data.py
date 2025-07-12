@@ -16,14 +16,14 @@ def init_cache(expire_after: int = 86400) -> None:
 
 def prices(tickers: list[str], start: str, end: str) -> dict[str, pd.DataFrame]:
     """Fetch historical prices for the given tickers."""
-    pass
+    return {}
 
 
 def fundamentals(ticker: str, api_key: str) -> pd.DataFrame:
     """Retrieve company fundamental data."""
-    pass
+    return pd.DataFrame()
 
 
 def benchmarks(series: str, start: str, end: str, api_key: str) -> pd.Series:
     """Download benchmark data such as CPI or SOFR."""
-    pass
+    return pd.Series(dtype=float)
