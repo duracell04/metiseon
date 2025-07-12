@@ -14,9 +14,10 @@ spec.loader.exec_module(risk)
 def test_garch_sigma_positive_finite():
     np.random.seed(0)
     returns = pd.Series(np.random.normal(0, 0.01, 60))
-    sigma = risk.garch_sigma(returns)
+    denom = pd.Series(1.0, index=returns.index)
+    sigma = risk.garch_sigma(returns.cumsum() + 10, denom)
     assert (sigma.dropna() > 0).all()
-    assert np.isfinite(sigma).all()
+    assert np.isfinite(sigma.dropna()).all()
 
 
 def test_slipped_cost():

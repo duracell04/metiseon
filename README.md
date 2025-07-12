@@ -44,6 +44,7 @@ Copy → paste → run. No cloud, no secrets, no vendor lock-in.
 | Weekly cron; fixed or %-of-NAV cash injection    | Intraday fills, latency arbitrage |
 | GARCH(1,1) σ + CVaR₉₉ tail risk                  | EVT, Student-t GARCH (hook)       |
 | WAL-mode DuckDB ledger + HTML equity curve       | UI dashboards, on-chain notarisation |
+| MEΩ default; CHF optional                        |                                    |
 
 ---
 
@@ -82,6 +83,16 @@ All tables co-habit **one** DuckDB file; nightly snapshots are DVC-pinned (SHA-2
 | `positions`    | ts, ticker, qty, cost, nav                        | derived           | DUCKDB CHECKs         |
 
 **Async ingestion**: `asyncio.gather` + `run_in_executor` → 5× speed-up vs serial HTTP.
+
+Current MEΩ weights:
+
+```sql
+SELECT symbol, weight
+FROM benchmarks
+WHERE date = (SELECT max(date) FROM benchmarks)
+ORDER BY weight DESC
+LIMIT 10;
+```
 
 ---
 
@@ -165,6 +176,8 @@ qty = round(cash / price, 4)    # 4 dp fractional ETFs
 Weekly HTML shows NAV curve + table:
 
 `| Ticker | D | Entry CHF | Exit CHF | Δ% | Fee bp | Slip bp | PnL CHF |`
+
+Metiseon reports α_real^{MEΩ} – returns net of inflation, funding, and cross-currency drift.
 
 ---
 

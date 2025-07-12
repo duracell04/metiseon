@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
+from datetime import datetime, date
 
 import pandas as pd
 import requests_cache
 import yfinance as yf
 from alpha_vantage.fundamentaldata import FundamentalData
+
+from . import meo, db
 
 # Enable local HTTP caching for all network calls
 requests_cache.install_cache("metiseon_cache", expire_after=86400)
@@ -122,3 +124,31 @@ async def fetch_fundamentals(tickers: list[str]) -> pd.DataFrame:
     rows = await asyncio.gather(*[_fetch(t) for t in tickers])
     df = pd.DataFrame(rows).set_index("ticker")
     return df.ffill()
+
+
+async def fetch_meo(as_of: date) -> pd.Series:
+    """Fetch MEΩ price and store in DuckDB benchmarks table."""
+
+    loop = asyncio.get_running_loop()
+    df, m_world = await loop.run_in_executor(None, meo.fetch_meo_components, as_of)
+    price = meo.meo_price_usd(m_world)
+
+    con = db.connect("portfolio.db")
+    con.execute(
+        """
+        CREATE TABLE IF NOT EXISTS benchmarks (
+            date DATE,
+            symbol TEXT,
+            weight DOUBLE,
+            meo_usd DOUBLE,
+            m_world_usd DOUBLE
+        )
+        """
+    )
+    for sym, row in df.iterrows():
+        con.execute(
+            "INSERT INTO benchmarks VALUES (?, ?, ?, ?, ?)",
+            (as_of, sym, float(row["weight"]), price, m_world),
+        )
+    con.commit()
+    return pd.Series({"meo_usd": price, "m_world_usd": m_world})

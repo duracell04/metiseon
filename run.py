@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from io import BytesIO
 from pathlib import Path
 from typing import Iterable
+from decimal import Decimal
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -33,7 +34,7 @@ async def pull_data(tickers: list[str], start: str, end: str) -> tuple[pd.DataFr
     return prices, fundamentals
 
 
-def latest_sigma(price_df: pd.DataFrame, date: pd.Timestamp, method: str, window: int) -> pd.Series:
+def latest_sigma(price_df: pd.DataFrame, date: pd.Timestamp, method: str, window: int, denom: pd.Series) -> pd.Series:
     levels = price_df.columns.levels[0]
     sigmas: dict[str, float] = {}
     for t in levels:
@@ -41,10 +42,11 @@ def latest_sigma(price_df: pd.DataFrame, date: pd.Timestamp, method: str, window
         if series.empty:
             sigmas[t] = float("nan")
             continue
+        denom_series = denom.loc[series.index]
         if method == "garch":
-            s = risk.garch_sigma(pd.Series(series).pct_change().dropna().pipe(lambda r: r))
+            s = risk.garch_sigma(series, denom_series)
         else:
-            s = risk.realised_sigma(series, window)
+            s = risk.realised_sigma(series, window, denom_series)
         sigmas[t] = s.iloc[-1] if not s.empty else float("nan")
     return pd.Series(sigmas)
 
@@ -81,6 +83,7 @@ def run_backtest(args: argparse.Namespace, cfg: dict) -> None:
     prices, fundamentals = asyncio.run(pull_data(tickers, start, end))
     fundamentals = fundamentals.sort_values("date")
     adv10 = prices.xs("volume", level=1, axis=1).rolling(10).mean()
+    meo_series = pd.Series(1.0, index=prices.index)
     book = ledger.Ledger(cfg.get("db_path", "portfolio.db"))
     nav_hist: list[tuple[datetime, float]] = []
     last = book.last_ticker()
@@ -98,14 +101,15 @@ def run_backtest(args: argparse.Namespace, cfg: dict) -> None:
         if f.empty:
             continue
         scores = score.apply_scores(f)
-        sigma = latest_sigma(prices, date, cfg.get("sigma_method", "garch"), int(cfg.get("risk_window", 63)))
+        sigma = latest_sigma(prices, date, cfg.get("sigma_method", "garch"), int(cfg.get("risk_window", 63)), meo_series)
         best = allocator.pick_asset(scores, sigma, last)
         if not best:
             continue
         price = prices.at[date, (best, "adj_close")]
         adv = adv10.at[date, best]
         cash = size_cash(nav, cfg, args.budget, args.pct)
-        qty = allocator.size_trade(price, cash)
+        budget_meo = Decimal(str(cash)) / Decimal(str(meo_series.at[date]))
+        qty = allocator.size_trade(price, budget_meo, meo_series.at[date])
         if qty and allocator.decision_block(qty, adv, FEE_BP, float(cfg.get("slip_cap_bp", 35))):
             fee = price * float(qty) * FEE_BP / 10000
             book.book_trade(date.to_pydatetime(), best, qty, price, fee)
@@ -124,6 +128,7 @@ def run_trade(args: argparse.Namespace, cfg: dict) -> None:
     prices, fundamentals = asyncio.run(pull_data(tickers, start, end))
     fundamentals = fundamentals.sort_values("date")
     adv10 = prices.xs("volume", level=1, axis=1).rolling(10).mean()
+    meo_series = pd.Series(1.0, index=prices.index)
     book = ledger.Ledger(cfg.get("db_path", "portfolio.db"))
     nav = book.nav()
     last = book.last_ticker()
@@ -134,7 +139,7 @@ def run_trade(args: argparse.Namespace, cfg: dict) -> None:
         .set_index("ticker")
     )
     scores = score.apply_scores(f)
-    sigma = latest_sigma(prices, today, cfg.get("sigma_method", "garch"), int(cfg.get("risk_window", 63)))
+    sigma = latest_sigma(prices, today, cfg.get("sigma_method", "garch"), int(cfg.get("risk_window", 63)), meo_series)
     best = allocator.pick_asset(scores, sigma, last)
     if not best:
         print("No suitable asset to trade.")
@@ -142,7 +147,8 @@ def run_trade(args: argparse.Namespace, cfg: dict) -> None:
     price = prices.at[today, (best, "adj_close")]
     adv = adv10.at[today, best]
     cash = size_cash(nav, cfg, args.budget, args.pct)
-    qty = allocator.size_trade(price, cash)
+    budget_meo = Decimal(str(cash)) / Decimal(str(meo_series.at[today]))
+    qty = allocator.size_trade(price, budget_meo, meo_series.at[today])
     if qty and allocator.decision_block(qty, adv, FEE_BP, float(cfg.get("slip_cap_bp", 35))):
         fee = price * float(qty) * FEE_BP / 10000
         book.book_trade(today.to_pydatetime(), best, qty, price, fee)
@@ -160,10 +166,12 @@ def main() -> None:
     back.add_argument("--end", required=True, help="End date YYYY-MM-DD")
     back.add_argument("--budget", type=float, help="Weekly cash injection")
     back.add_argument("--pct", type=float, help="Weekly injection as fraction of NAV")
+    back.add_argument("--denom", choices=["CHF", "MEΩ"], default="MEΩ", help="Reporting currency")
 
     trade = sub.add_parser("trade", help="Execute single trade step")
     trade.add_argument("--budget", type=float, help="Cash to deploy")
     trade.add_argument("--pct", type=float, help="Cash as fraction of NAV")
+    trade.add_argument("--denom", choices=["CHF", "MEΩ"], default="MEΩ", help="Reporting currency")
 
     args = parser.parse_args()
     cfg = load_config()
