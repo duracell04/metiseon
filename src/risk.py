@@ -34,7 +34,7 @@ def garch_sigma(prices: pd.Series, denom_series: pd.Series) -> pd.Series:
     try:
         res = model.fit(disp="off")
     except Exception:
-        return pd.Series(index=log_ret.index, dtype=float)
+        return pd.Series(index=prices.index, dtype=float)
 
     sigma = pd.Series(res.conditional_volatility / scale, index=r.index)
     return sigma.reindex(prices.index)

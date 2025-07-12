@@ -26,3 +26,9 @@ def test_meo_weights(monkeypatch):
     df, m_world = meo.fetch_meo_components(date(2024, 1, 1))
     assert abs(df["weight"].sum() - 1) < 1e-9
     assert meo.meo_price_usd(m_world) == m_world * 1e-6
+
+
+def test_cross_price():
+    result = meo.meo_cross_price(10.0, 2.0)
+    assert result == 5.0
+    assert pd.isna(meo.meo_cross_price(10.0, 0.0))
