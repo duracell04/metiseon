@@ -6,6 +6,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
+import pandas as pd
+
 import duckdb
 
 from . import db
@@ -75,6 +77,22 @@ class Ledger:
             """
         ).fetchone()
         return float(result[0]) if result and result[0] is not None else 0.0
+
+    def nav_meo(self, prices_usd: pd.Series, meo_usd: float) -> Decimal:
+        """Return NAV expressed in MEΩ units."""
+
+        total = Decimal("0")
+        for ticker, price in prices_usd.items():
+            row = self.con.execute(
+                "SELECT qty FROM positions WHERE ticker = ? ORDER BY ts DESC LIMIT 1",
+                (ticker,),
+            ).fetchone()
+            if row is None:
+                continue
+            total += Decimal(str(row[0])) * Decimal(str(price))
+        if meo_usd <= 0:
+            return Decimal("0")
+        return total / Decimal(str(meo_usd))
 
     def last_ticker(self) -> str | None:
         """Return the most recently traded ticker, if any."""

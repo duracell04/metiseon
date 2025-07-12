@@ -28,13 +28,13 @@ def pick_asset(scores: pd.Series, sigma: pd.Series, last_winner: str | None = No
     return best.idxmax()
 
 
-def size_trade(price: float, cash: float) -> Decimal:
+def size_trade(price_usd: float, budget_meo: Decimal, meo_usd: float) -> Decimal:
     """Size the trade in units rounded to four decimals."""
 
-    if price <= 0:
+    if price_usd <= 0 or meo_usd <= 0:
         return Decimal("0")
 
-    qty = Decimal(str(cash)) / Decimal(str(price))
+    qty = budget_meo * Decimal(str(meo_usd)) / Decimal(str(price_usd))
     return qty.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
 
 

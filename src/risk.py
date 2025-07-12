@@ -7,14 +7,15 @@ import pandas as pd
 from arch import arch_model
 
 
-def garch_sigma(log_ret: pd.Series) -> pd.Series:
+def garch_sigma(prices: pd.Series, denom_series: pd.Series) -> pd.Series:
     """Estimate conditional volatility via a GARCH(1,1) model.
 
     Parameters
     ----------
-    log_ret : pandas.Series
-        Time series of log returns ordered by time. Missing values are
-        automatically dropped.
+    prices : pandas.Series
+        Price series.
+    denom_series : pandas.Series
+        Series of MEΩ prices aligned to ``prices``.
 
     Returns
     -------
@@ -23,9 +24,10 @@ def garch_sigma(log_ret: pd.Series) -> pd.Series:
         series when the model cannot be fitted.
     """
 
-    r = log_ret.dropna()
+    rel = prices / denom_series
+    r = np.log(rel).diff().dropna()
     if len(r) < 20:
-        return pd.Series(index=log_ret.index, dtype=float)
+        return pd.Series(index=prices.index, dtype=float)
 
     scale = 100.0
     model = arch_model(r * scale, p=1, q=1, mean="zero", vol="Garch", rescale=False)
@@ -35,10 +37,10 @@ def garch_sigma(log_ret: pd.Series) -> pd.Series:
         return pd.Series(index=log_ret.index, dtype=float)
 
     sigma = pd.Series(res.conditional_volatility / scale, index=r.index)
-    return sigma.reindex(log_ret.index)
+    return sigma.reindex(prices.index)
 
 
-def realised_sigma(prices: pd.Series, window: int = 63) -> pd.Series:
+def realised_sigma(prices: pd.Series, window: int = 63, denom_series: pd.Series | None = None) -> pd.Series:
     """Compute historical volatility from a price series.
 
     Parameters
@@ -56,7 +58,10 @@ def realised_sigma(prices: pd.Series, window: int = 63) -> pd.Series:
     """
 
     prices = prices.sort_index()
-    log_ret = np.log(prices).diff()
+    if denom_series is None:
+        denom_series = pd.Series(1.0, index=prices.index)
+    rel = prices / denom_series
+    log_ret = np.log(rel).diff()
     return log_ret.rolling(window=window, min_periods=window).std()
 
 
