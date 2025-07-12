@@ -34,6 +34,16 @@ async def pull_data(tickers: list[str], start: str, end: str) -> tuple[pd.DataFr
     return prices, fundamentals
 
 
+async def gather_meo_series(dates: Iterable[pd.Timestamp]) -> pd.Series:
+    """Return MEΩ prices for each date."""
+    async def _fetch(d: pd.Timestamp) -> float:
+        s = await async_data.fetch_meo(d.date())
+        return float(s.get("meo_usd", float("nan")))
+
+    prices = await asyncio.gather(*[_fetch(d) for d in dates])
+    return pd.Series(prices, index=pd.DatetimeIndex(dates))
+
+
 def latest_sigma(price_df: pd.DataFrame, date: pd.Timestamp, method: str, window: int, denom: pd.Series) -> pd.Series:
     levels = price_df.columns.levels[0]
     sigmas: dict[str, float] = {}
@@ -83,7 +93,10 @@ def run_backtest(args: argparse.Namespace, cfg: dict) -> None:
     prices, fundamentals = asyncio.run(pull_data(tickers, start, end))
     fundamentals = fundamentals.sort_values("date")
     adv10 = prices.xs("volume", level=1, axis=1).rolling(10).mean()
-    meo_series = pd.Series(1.0, index=prices.index)
+    if args.denom == "MEΩ":
+        meo_series = asyncio.run(gather_meo_series(prices.index))
+    else:
+        meo_series = pd.Series(1.0, index=prices.index)
     book = ledger.Ledger(cfg.get("db_path", "portfolio.db"))
     nav_hist: list[tuple[datetime, float]] = []
     last = book.last_ticker()
@@ -107,13 +120,30 @@ def run_backtest(args: argparse.Namespace, cfg: dict) -> None:
             continue
         price = prices.at[date, (best, "adj_close")]
         adv = adv10.at[date, best]
+        if args.denom == "MEΩ":
+            nav = float(
+                book.nav_meo(
+                    prices.xs("adj_close", level=1, axis=1).loc[date],
+                    meo_series.at[date],
+                )
+            )
+        else:
+            nav = book.nav()
         cash = size_cash(nav, cfg, args.budget, args.pct)
         budget_meo = Decimal(str(cash)) / Decimal(str(meo_series.at[date]))
         qty = allocator.size_trade(price, budget_meo, meo_series.at[date])
         if qty and allocator.decision_block(qty, adv, FEE_BP, float(cfg.get("slip_cap_bp", 35))):
             fee = price * float(qty) * FEE_BP / 10000
             book.book_trade(date.to_pydatetime(), best, qty, price, fee)
-            nav = book.nav()
+            if args.denom == "MEΩ":
+                nav = float(
+                    book.nav_meo(
+                        prices.xs("adj_close", level=1, axis=1).loc[date],
+                        meo_series.at[date],
+                    )
+                )
+            else:
+                nav = book.nav()
             nav_hist.append((date.to_pydatetime(), nav))
             last = best
     if nav_hist:
@@ -128,11 +158,22 @@ def run_trade(args: argparse.Namespace, cfg: dict) -> None:
     prices, fundamentals = asyncio.run(pull_data(tickers, start, end))
     fundamentals = fundamentals.sort_values("date")
     adv10 = prices.xs("volume", level=1, axis=1).rolling(10).mean()
-    meo_series = pd.Series(1.0, index=prices.index)
+    if args.denom == "MEΩ":
+        meo_series = asyncio.run(gather_meo_series(prices.index))
+    else:
+        meo_series = pd.Series(1.0, index=prices.index)
     book = ledger.Ledger(cfg.get("db_path", "portfolio.db"))
-    nav = book.nav()
-    last = book.last_ticker()
     today = prices.index[-1]
+    if args.denom == "MEΩ":
+        nav = float(
+            book.nav_meo(
+                prices.xs("adj_close", level=1, axis=1).loc[today],
+                meo_series.at[today],
+            )
+        )
+    else:
+        nav = book.nav()
+    last = book.last_ticker()
     f = (
         fundamentals[fundamentals["date"] <= today - timedelta(days=PIT_LAG_DAYS)]
         .drop_duplicates("ticker", keep="last")
@@ -154,6 +195,8 @@ def run_trade(args: argparse.Namespace, cfg: dict) -> None:
         book.book_trade(today.to_pydatetime(), best, qty, price, fee)
     nav_df = book.con.execute("SELECT ts, nav FROM positions ORDER BY ts").df()
     if not nav_df.empty:
+        if args.denom == "MEΩ":
+            nav_df["nav"] = nav_df["nav"] / meo_series.reindex(pd.to_datetime(nav_df["ts"])).values
         generate_report(pd.to_datetime(nav_df["ts"]), nav_df["nav"], cfg.get("report_path", "reports/latest.html"))
 
 
