@@ -19,18 +19,19 @@ Copy → paste → run. No cloud, no secrets, no vendor lock-in.
 1. Scope & Guard-Rails  
 2. Quick Start  
 3. Data Lineage & Schema  
-4. Economic Engine  
-   - 4.1 Quantum-State Currency  
-   - 4.2 Durability & Value Factor  
-   - 4.3 Dynamic Risk Surface  
-   - 4.4 Liquidity & Slippage  
-   - 4.5 Allocator & Capital Flow  
-5. Performance Accounting  
-6. Repository Blueprint  
-7. config.yaml Cheatsheet  
-8. Dependencies  
-9. Extensibility Hooks  
-10. Mathematical Appendix  
+4. Economic Engine
+   - 4.1 Quantum-State Currency
+   - 4.2 Durability & Value Factor
+   - 4.3 Dynamic Risk Surface
+   - 4.4 Liquidity & Slippage
+   - 4.5 Allocator & Capital Flow
+5. Performance Accounting
+   - 5.1 Global Interest-Rate Neutral Alpha (GINα)
+6. Repository Blueprint
+7. config.yaml Cheatsheet
+8. Dependencies
+9. Extensibility Hooks
+10. Mathematical Appendix
 11. Disclaimer
 
 ---
@@ -178,6 +179,31 @@ Weekly HTML shows NAV curve + table:
 `| Ticker | D | Entry CHF | Exit CHF | Δ% | Fee bp | Slip bp | PnL CHF |`
 
 Metiseon reports α_real^{MEΩ} – returns net of inflation, funding, and cross-currency drift.
+
+### 5.1 Global Interest-Rate Neutral Alpha (GINα)
+
+GINα measures performance relative to a global interest-rate and inflation baseline. It
+adjusts nominal returns for worldwide yield differentials and carry costs so that
+portfolio results reflect pure skill rather than macro conditions.
+
+Mathematically,
+
+```
+GINα_t = ((1 + R_t^{Metiseon}) / (1 + r_t^{IRS} + π_t^{MEΩ})) - 1 - C_{carry,t}
+```
+
+where `R_t^{Metiseon}` is the portfolio return in MEΩ units, `r_t^{IRS}` is the
+global interest-rate surface, `π_t^{MEΩ}` the aggregated global inflation rate and
+`C_{carry,t}` explicit funding costs.
+
+The interest-rate surface itself is fitted as a polynomial regression over global
+monetary indicators,
+
+```
+r_t^{IRS}(x) = Σ_{k=0}^n α_k(t) · x^k
+```
+
+and carry-neutrality across currencies is enforced via covered interest-rate parity.
 
 ---
 
