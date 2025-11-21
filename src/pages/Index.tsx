@@ -28,12 +28,16 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" className="bg-auric text-midnight hover:bg-auric/90">
-              Run a 10-year backtest
-            </Button>
-            <Button size="lg" variant="link" className="text-auric">
-              Show me the equations →
-            </Button>
+            <Link to="/demo">
+              <Button size="lg" className="bg-auric text-midnight hover:bg-auric/90 w-full sm:w-auto">
+                Run a 10-year backtest
+              </Button>
+            </Link>
+            <Link to="/how-it-works">
+              <Button size="lg" variant="link" className="text-auric">
+                Show me the equations →
+              </Button>
+            </Link>
           </div>
           
           <div className="flex justify-center mb-8">
