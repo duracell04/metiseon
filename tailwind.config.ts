@@ -19,6 +19,15 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        
+        midnight: "hsl(var(--midnight))",
+        snow: "hsl(var(--snow))",
+        ink: "hsl(var(--ink))",
+        graphgreen: "hsl(var(--graph-green))",
+        signal: "hsl(var(--signal-orange))",
+        auric: "hsl(var(--auric))",
+        platinum: "hsl(var(--platinum))",
+        
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -47,16 +56,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        chart: {
+          line: "hsl(var(--chart-line))",
+          band: "hsl(var(--chart-band))",
+          positive: "hsl(var(--chart-positive))",
+          warning: "hsl(var(--chart-warning))",
         },
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        mono: ["IBM Plex Mono", "ui-monospace", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",
