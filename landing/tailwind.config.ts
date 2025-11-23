@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./src/app/**/*.{ts,tsx}",
+    "./src/components/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}"
+  ],
   prefix: "",
   theme: {
     container: {
@@ -64,8 +69,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        mono: ["IBM Plex Mono", "ui-monospace", "monospace"],
+        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "IBM Plex Mono", "ui-monospace", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",
