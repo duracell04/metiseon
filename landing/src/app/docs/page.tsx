@@ -1,10 +1,26 @@
+import { ReactNode } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, FileText } from "lucide-react";
 
-const papers = [
+type Paper = {
+  title: ReactNode;
+  description: string;
+  path: string;
+  type: string;
+};
+
+const papers: Paper[] = [
   {
-    title: "MEIc: MA�tior NumAcraire",
+    title: (
+      <>
+        MEIc:{" "}
+        <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline">
+          Metior
+        </a>
+        {/* https://github.com/duracell04/Metior */} NumAcraire
+      </>
+    ),
     description:
       "Construction, governance, and stability analysis of the MEIc global numAcraire. Inclusion requires public M2 or free-float mcap �%� 1% of MEIc. Weights recompute daily from open feeds; zero discretion; persisted as (date, symbol, weight, meo_usd, m_world_usd).",
     path: "/mnt/data/Metiseon Robo-Allocator.pdf",

@@ -37,9 +37,12 @@ const LegalDisclaimerPage = () => {
                 </p>
 
                 <p>
-                  <strong className="text-foreground">MEIc-denominated results.</strong> All performance metrics are expressed in MA�tior (MEIc), a
-                  synthetic numAcraire. Results may differ materially when converted to any fiat currency. Currency conversion introduces additional risks
-                  and uncertainties.
+                  <strong className="text-foreground">MEIc-denominated results.</strong> All performance metrics are expressed in{" "}
+                  <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline">
+                    Metior
+                  </a>
+                  {/* https://github.com/duracell04/Metior */} (MEIc), a synthetic numAcraire. Results may differ materially when converted to any fiat
+                  currency. Currency conversion introduces additional risks and uncertainties.
                 </p>
 
                 <p>

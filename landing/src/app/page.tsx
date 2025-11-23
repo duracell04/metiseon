@@ -22,8 +22,12 @@ const HomePage = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
-            Metiseon is a deterministic, open-math robo-allocator. It thinks in MA�tior (MEIc),
-            so performance is currency-neutral, inflation-aware, and reproducible. Same inputs �+' same trades.
+            Metiseon is a deterministic, open-math robo-allocator. It thinks in{" "}
+            <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline">
+              Metior
+            </a>
+            {/* https://github.com/duracell04/Metior */} (MEIc), so performance is currency-neutral, inflation-aware, and reproducible. Same inputs �+' same
+            trades.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -41,7 +45,13 @@ const HomePage = () => {
 
           <div className="flex justify-center mb-8">
             <Badge variant="outline" className="border-auric/30 text-auric px-4 py-2">
-              <span className="font-mono">Powered by MA�tior (MEIc)</span>
+              <span className="font-mono">
+                Powered by{" "}
+                <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline underline-offset-2">
+                  Metior
+                </a>
+                {/* https://github.com/duracell04/Metior */} (MEIc)
+              </span>
             </Badge>
           </div>
         </div>
