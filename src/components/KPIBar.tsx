@@ -1,3 +1,5 @@
+"use client";
+
 interface KPIBarProps {
   metrics: {
     label: string;
