@@ -14,23 +14,23 @@ const papers: Paper[] = [
   {
     title: (
       <>
-        MEIc:{" "}
-        <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline">
+        <span className="symbols">MEΩ</span>:{" "}
+        <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline symbols">
           Metior
-        </a>
-        {/* https://github.com/duracell04/Metior */} NumAcraire
+        </a>{" "}
+        Numeraire
       </>
     ),
     description:
-      "Construction, governance, and stability analysis of the MEIc global numAcraire. Inclusion requires public M2 or free-float mcap �%� 1% of MEIc. Weights recompute daily from open feeds; zero discretion; persisted as (date, symbol, weight, meo_usd, m_world_usd).",
+      "Construction, governance, and stability analysis of the MEΩ global numeraire. Inclusion requires public M2 or free-float mcap >= 1% of MEΩ. Weights recompute daily from open feeds; zero discretion; persisted as (date, symbol, weight, meo_usd, m_world_usd).",
     path: "/mnt/data/Metiseon Robo-Allocator.pdf",
     type: "Core",
   },
   {
-    title: "GINI�: Global Interest-Rate Neutral Alpha",
+    title: <span className="symbols">GINα: Global Interest-Rate Neutral Alpha</span>,
     description:
-      "Performance metric that isolates skill from currency effects and interest-rate environments. Formula: ((1 + R) / (1 + r_IRS + I?_MEIc)) �^' 1 �^' carry.",
-    path: "/mnt/data/GINI�.pdf",
+      "Performance metric that isolates skill from currency effects and interest-rate environments. Formula: ((1 + R) / (1 + r_IRS + I_MEΩ)) - 1 - carry.",
+    path: "/mnt/data/GINA.pdf",
     type: "Metric",
   },
   {
@@ -43,9 +43,9 @@ const papers: Paper[] = [
 ];
 
 const stability = {
-  title: "MEIc Stability Analysis",
+  title: <span className="symbols">MEΩ Stability Analysis</span>,
   content:
-    "MEIc vs USD/EUR/CHF (1970�+'today) shows lower drift/vol; construction uses DCC-GARCH for correlations, replicator dynamics for weights, EVT thresholds for tail stability.",
+    "MEΩ vs USD/EUR/CHF (1970–today) shows lower drift/vol; construction uses DCC-GARCH for correlations, replicator dynamics for weights, EVT thresholds for tail stability.",
 };
 
 const DocsPage = () => {
@@ -60,7 +60,7 @@ const DocsPage = () => {
 
           <div className="grid md:grid-cols-2 gap-6 mb-12">
             {papers.map((paper) => (
-              <div key={paper.title} className="border border-border rounded-lg p-6 bg-card hover:border-auric/50 transition-colors">
+              <div key={paper.path} className="border border-border rounded-lg p-6 bg-card hover:border-auric/50 transition-colors">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <FileText className="w-5 h-5 text-auric" />
@@ -83,10 +83,10 @@ const DocsPage = () => {
           </div>
 
           <div className="border border-auric/30 bg-auric/5 rounded-lg p-6">
-            <h3 className="font-semibold text-foreground mb-3">MEIc Governance</h3>
+            <h3 className="font-semibold text-foreground mb-3 symbols">MEΩ Governance</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Inclusion requires public M2 or free-float mcap �%� 1% of MEIc. Weights recompute daily from open feeds; zero discretion;
-              persisted as (date, symbol, weight, meo_usd, m_world_usd).
+              Inclusion requires public M2 or free-float mcap >= 1% of MEΩ. Weights recompute daily from open feeds; zero discretion; persisted as (date,
+              symbol, weight, meo_usd, m_world_usd).
             </p>
           </div>
         </div>

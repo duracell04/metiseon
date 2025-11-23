@@ -1,6 +1,13 @@
+import { ReactNode } from "react";
 import { Header } from "@/components/Header";
 import { ChartCard } from "@/components/ChartCard";
 import { KPIBar } from "@/components/KPIBar";
+
+type PortfolioMetric = {
+  label: ReactNode;
+  value: string;
+  variant?: "default" | "positive" | "warning" | "focus";
+};
 
 const sampleEquities = [
   {
@@ -9,7 +16,7 @@ const sampleEquities = [
     gina: "+4.2%",
     sigma: "18.3%",
     cvar: "-12.1%",
-    slipcap: "28bp",
+    slipcap: "28 bp",
     spark: [18, 16, 15, 12, 14, 10, 9, 8, 6, 5],
   },
   {
@@ -18,7 +25,7 @@ const sampleEquities = [
     gina: "+3.8%",
     sigma: "16.7%",
     cvar: "-10.8%",
-    slipcap: "25bp",
+    slipcap: "25 bp",
     spark: [20, 19, 17, 15, 16, 14, 12, 13, 11, 10],
   },
   {
@@ -27,7 +34,7 @@ const sampleEquities = [
     gina: "+5.1%",
     sigma: "21.2%",
     cvar: "-14.3%",
-    slipcap: "31bp",
+    slipcap: "31 bp",
     spark: [22, 20, 18, 15, 17, 16, 14, 12, 11, 9],
   },
   {
@@ -36,7 +43,7 @@ const sampleEquities = [
     gina: "+7.6%",
     sigma: "34.5%",
     cvar: "-23.7%",
-    slipcap: "42bp",
+    slipcap: "42 bp",
     spark: [24, 25, 22, 20, 23, 21, 19, 18, 16, 15],
   },
   {
@@ -45,7 +52,7 @@ const sampleEquities = [
     gina: "+2.1%",
     sigma: "22.1%",
     cvar: "-15.2%",
-    slipcap: "33bp",
+    slipcap: "33 bp",
     spark: [12, 11, 10, 9, 10, 8, 7, 8, 7, 6],
   },
   {
@@ -54,16 +61,16 @@ const sampleEquities = [
     gina: "+3.4%",
     sigma: "17.9%",
     cvar: "-11.5%",
-    slipcap: "27bp",
+    slipcap: "27 bp",
     spark: [14, 15, 13, 12, 13, 11, 10, 11, 9, 8],
   },
 ];
 
-const portfolioMetrics = [
-  { label: "GINI�", value: "+4.3%", variant: "focus" as const },
-  { label: "I��,+�,�", value: "19.2%", variant: "default" as const },
-  { label: "CVaR�,%�,.", value: "-13.4%", variant: "warning" as const },
-  { label: "SlipCap", value: "29bp", variant: "default" as const },
+const portfolioMetrics: PortfolioMetric[] = [
+  { label: <span className="symbols">GINα</span>, value: "+4.3%", variant: "focus" },
+  { label: <span className="symbols">σ<sub>63</sub></span>, value: "19.2%", variant: "default" },
+  { label: <span className="symbols">CVaR<sub>95</sub></span>, value: "-13.4%", variant: "warning" },
+  { label: "SlipCap", value: "29 bp", variant: "default" },
 ];
 
 const sparkToPath = (points: number[]) => {
@@ -79,7 +86,7 @@ const ReportsPage = () => {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-foreground mb-4">Reports</h1>
-          <p className="text-lg text-muted-foreground mb-8">Portfolio performance in MEIc. All metrics are currency-neutral and inflation-aware.</p>
+          <p className="text-lg text-muted-foreground mb-8">Portfolio performance in MEΩ. All metrics are currency-neutral and inflation-aware.</p>
 
           <div className="mb-12">
             <h2 className="text-xl font-semibold text-foreground mb-4">Portfolio Overview</h2>
@@ -87,7 +94,7 @@ const ReportsPage = () => {
           </div>
 
           <div className="mb-12">
-            <ChartCard title="NAV Performance" subtitle="MEIc-denominated net asset value (2015-2025)">
+            <ChartCard title="NAV Performance" subtitle="MEΩ-denominated net asset value (2015-2025)">
               <div className="w-full h-full flex items-end px-4 pb-8">
                 <svg className="w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none">
                   <path d="M 0 180 Q 100 160 200 120 T 400 60 L 400 200 L 0 200 Z" fill="hsl(var(--platinum))" opacity="0.2" />
@@ -111,15 +118,19 @@ const ReportsPage = () => {
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">GINI�</span>
+                      <span className="text-xs text-muted-foreground symbols">GINα</span>
                       <span className="font-mono text-sm font-semibold text-auric">{equity.gina}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">I��,+�,�</span>
+                      <span className="text-xs text-muted-foreground symbols">
+                        σ<sub>63</sub>
+                      </span>
                       <span className="font-mono text-sm">{equity.sigma}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-muted-foreground">CVaR�,%�,.</span>
+                      <span className="text-xs text-muted-foreground symbols">
+                        CVaR<sub>95</sub>
+                      </span>
                       <span className="font-mono text-sm text-signal">{equity.cvar}</span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -140,8 +151,8 @@ const ReportsPage = () => {
 
           <div className="mt-12 border-t border-border pt-8">
             <p className="text-xs text-muted-foreground">
-              All performance metrics are MEIc-denominated. GINI� isolates skill from currency effects. I��,+�,� is 63-day realized volatility. CVaR�,%�,. is 95%
-              conditional value at risk. SlipCap is the maximum allowable trading cost per position change.
+              All performance metrics are MEΩ-denominated. GINα isolates skill from currency effects. σ<sub>63</sub> is 63-day realized volatility.
+              CVaR<sub>95</sub> is 95% conditional value at risk. SlipCap is the maximum allowable trading cost per position change.
             </p>
           </div>
         </div>

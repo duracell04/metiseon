@@ -23,6 +23,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+      </head>
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable, ibmPlexMono.variable)}>
         <Providers>{children}</Providers>
       </body>

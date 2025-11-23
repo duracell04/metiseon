@@ -44,6 +44,8 @@
     --chart-band: 215 13% 69%;
     --chart-positive: 145 63% 49%;
     --chart-warning: 14 100% 64%;
+
+    --symbols: "Noto Sans Symbols 2", "Noto Sans Greek", "Segoe UI Symbol", "Segoe UI", var(--font-sans), system-ui, sans-serif;
   }
 
   .dark {
@@ -85,6 +87,10 @@
   .font-mono {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
+  }
+
+  .symbols {
+    font-family: var(--symbols);
   }
 
   *:focus-visible {

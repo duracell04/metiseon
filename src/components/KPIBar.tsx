@@ -1,8 +1,10 @@
 "use client";
 
+import { ReactNode } from "react";
+
 interface KPIBarProps {
   metrics: {
-    label: string;
+    label: ReactNode;
     value: string;
     variant?: "default" | "positive" | "warning" | "focus";
   }[];

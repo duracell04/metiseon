@@ -4,13 +4,13 @@ import { Download } from "lucide-react";
 
 const assets = [
   {
-    name: "I�-M Monogram (Solid)",
+    name: "Σ-M Monogram (Solid)",
     file: "metiseon_sigmam_solid.svg",
     path: "/mnt/data/metiseon_sigmam_solid.svg",
     size: "2 KB",
   },
   {
-    name: "I�-M Monogram (Outline)",
+    name: "Σ-M Monogram (Outline)",
     file: "metiseon_sigmam_outline.svg",
     path: "/mnt/data/metiseon_sigmam_outline.svg",
     size: "2 KB",
@@ -22,7 +22,7 @@ const assets = [
     size: "3 KB",
   },
   {
-    name: "MEIc Coin Badge",
+    name: "MEΩ Coin Badge",
     file: "metior_meo_badge.svg",
     path: "/mnt/data/metior_meo_badge.svg",
     size: "4 KB",
@@ -70,7 +70,7 @@ const BrandPage = () => {
 
           <div className="border border-border rounded-lg p-12 bg-card mb-12 flex items-center justify-center">
             <div className="w-32 h-32 bg-midnight rounded-lg flex items-center justify-center">
-              <span className="text-auric font-bold text-6xl">I�M</span>
+              <span className="text-auric font-bold text-6xl symbols">ΣM</span>
             </div>
           </div>
 
@@ -82,7 +82,7 @@ const BrandPage = () => {
                   <div>
                     <h3 className="font-semibold text-foreground text-sm">{asset.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {asset.file} �?� {asset.size}
+                      {asset.file} · {asset.size}
                     </p>
                   </div>
                   <Button size="sm" variant="outline">

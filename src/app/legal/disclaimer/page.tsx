@@ -21,14 +21,14 @@ const LegalDisclaimerPage = () => {
                 </p>
 
                 <p>
-                  <strong className="text-foreground">Paper trading only.</strong> All backtests and simulations are historical. Metiseon does not
-                  execute real trades, manage real capital, or interact with brokerage accounts. Results shown are hypothetical.
+                  <strong className="text-foreground">Paper trading only.</strong> All backtests and simulations are historical. Metiseon does not execute
+                  real trades, manage real capital, or interact with brokerage accounts. Results shown are hypothetical.
                 </p>
 
                 <p>
-                  <strong className="text-foreground">Public data sources.</strong> Market data is sourced from Yahoo Finance, FRED, Alpha Vantage (demo
-                  tier), and CoinGecko. Data quality, availability, and accuracy are subject to third-party limitations. No guarantees are made regarding
-                  data completeness.
+                  <strong className="text-foreground">Public data sources.</strong> Market data is sourced from Yahoo Finance, FRED, Alpha Vantage (demo tier),
+                  and CoinGecko. Data quality, availability, and accuracy are subject to third-party limitations. No guarantees are made regarding data
+                  completeness.
                 </p>
 
                 <p>
@@ -37,23 +37,23 @@ const LegalDisclaimerPage = () => {
                 </p>
 
                 <p>
-                  <strong className="text-foreground">MEIc-denominated results.</strong> All performance metrics are expressed in{" "}
-                  <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline">
-                    Metior
+                  <strong className="text-foreground">MEΩ-denominated results.</strong> All performance metrics are expressed in{" "}
+                  <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline symbols">
+                    Metior (MEΩ)
                   </a>
-                  {/* https://github.com/duracell04/Metior */} (MEIc), a synthetic numAcraire. Results may differ materially when converted to any fiat
-                  currency. Currency conversion introduces additional risks and uncertainties.
+                  , a synthetic numeraire. Results may differ materially when converted to any fiat currency. Currency conversion introduces additional risks
+                  and uncertainties.
                 </p>
 
                 <p>
-                  <strong className="text-foreground">GINI� performance metric.</strong> Global Interest-Rate Neutral Alpha (GINI�) is a research metric
-                  designed to isolate skill from currency and interest-rate effects. It is not a standard industry metric and may not be comparable to
-                  traditional performance measures.
+                  <strong className="text-foreground">GINα performance metric.</strong> Global Interest-Rate Neutral Alpha (GINα) is a research metric designed
+                  to isolate skill from currency and interest-rate effects. It is not a standard industry metric and may not be comparable to traditional
+                  performance measures.
                 </p>
 
                 <p>
-                  <strong className="text-foreground">No warranties.</strong> Metiseon is provided "as is" without warranties of any kind, express or
-                  implied, including but not limited to fitness for a particular purpose, merchantability, or non-infringement.
+                  <strong className="text-foreground">No warranties.</strong> Metiseon is provided "as is" without warranties of any kind, express or implied,
+                  including but not limited to fitness for a particular purpose, merchantability, or non-infringement.
                 </p>
 
                 <p>

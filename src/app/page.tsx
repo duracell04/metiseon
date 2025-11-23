@@ -13,21 +13,20 @@ const HomePage = () => {
         <div className="max-w-4xl mx-auto text-center mb-24">
           <div className="mb-8 flex justify-center">
             <div className="w-20 h-20 bg-midnight rounded-lg flex items-center justify-center">
-              <span className="text-auric font-bold text-4xl">I�M</span>
+              <span className="text-auric font-bold text-4xl symbols">ΣM</span>
             </div>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Open math. Deterministic capital. Benchmarked in MEIc.
+            Open math. Deterministic capital. Benchmarked in MEΩ.
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
             Metiseon is a deterministic, open-math robo-allocator. It thinks in{" "}
-            <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline">
-              Metior
+            <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline symbols">
+              Metior (MEΩ)
             </a>
-            {/* https://github.com/duracell04/Metior */} (MEIc), so performance is currency-neutral, inflation-aware, and reproducible. Same inputs �+' same
-            trades.
+            , so performance is currency-neutral, inflation-aware, and reproducible. Same inputs → same trades.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -38,19 +37,18 @@ const HomePage = () => {
             </Link>
             <Link href="/how-it-works">
               <Button size="lg" variant="link" className="text-auric">
-                Show me the equations �+'
+                Show me the equations →
               </Button>
             </Link>
           </div>
 
           <div className="flex justify-center mb-8">
             <Badge variant="outline" className="border-auric/30 text-auric px-4 py-2">
-              <span className="font-mono">
+              <span className="font-mono symbols">
                 Powered by{" "}
-                <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline underline-offset-2">
-                  Metior
+                <a href="https://metior.akalabs.dev/" target="_blank" rel="noreferrer" className="text-auric underline underline-offset-2 symbols">
+                  Metior (MEΩ)
                 </a>
-                {/* https://github.com/duracell04/Metior */} (MEIc)
               </span>
             </Badge>
           </div>
@@ -76,8 +74,8 @@ const HomePage = () => {
                   <Check className="w-4 h-4 text-auric" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-2">MEIc-native</h3>
-                  <p className="text-sm text-muted-foreground">Global numAcraire (fiat M2 + metals + crypto).</p>
+                  <h3 className="font-semibold text-foreground mb-2 symbols">MEΩ-native</h3>
+                  <p className="text-sm text-muted-foreground">Global numeraire (fiat M2 + metals + crypto).</p>
                 </div>
               </div>
             </div>
@@ -88,8 +86,8 @@ const HomePage = () => {
                   <Check className="w-4 h-4 text-auric" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-2">GINI�</h3>
-                  <p className="text-sm text-muted-foreground">Interest-rate neutral alpha�?"skill, not currency luck.</p>
+                  <h3 className="font-semibold text-foreground mb-2 symbols">GINα</h3>
+                  <p className="text-sm text-muted-foreground">Interest-rate neutral alpha—skill, not currency luck.</p>
                 </div>
               </div>
             </div>

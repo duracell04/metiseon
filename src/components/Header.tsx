@@ -11,7 +11,7 @@ export const Header = () => {
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-8 h-8 bg-midnight rounded flex items-center justify-center">
-              <span className="text-auric font-bold text-lg">I�M</span>
+              <span className="text-auric font-bold text-lg symbols">ΣM</span>
             </div>
             <span className="font-semibold text-foreground">Metiseon</span>
           </Link>
@@ -35,7 +35,7 @@ export const Header = () => {
           </nav>
 
           <Badge variant="outline" className="hidden sm:flex items-center gap-1.5 border-auric/30 text-auric">
-            <span className="font-mono text-xs">Powered by MA�tior (MEIc)</span>
+            <span className="font-mono text-xs symbols">Powered by Metior (MEΩ)</span>
           </Badge>
         </div>
       </div>
