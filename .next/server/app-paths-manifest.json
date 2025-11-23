@@ -1,6 +1,7 @@
 {
-  "/how-it-works/page": "app/how-it-works/page.js",
+  "/page": "app/page.js",
   "/demo/page": "app/demo/page.js",
-  "/docs/page": "app/docs/page.js",
-  "/reports/page": "app/reports/page.js"
+  "/reports/page": "app/reports/page.js",
+  "/how-it-works/page": "app/how-it-works/page.js",
+  "/docs/page": "app/docs/page.js"
 }

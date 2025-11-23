@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="320" viewBox="0 0 640 320" role="img" aria-label="Durability-Lite flags (base=25)">
+  <rect width="640" height="320" fill="#0B1220" rx="12" />
+  <text x="32" y="36" fill="#F8FAFC" font-family="Inter, system-ui" font-size="16" font-weight="600">Durability-Lite flags (base=25)</text>
+  <g transform="translate(32,72)">
+    <rect x="0" y="32" width="520" height="40" fill="#111827" rx="8" />
+    <rect x="0" y="32" width="80" height="40" fill="#C8A156" />
+    <rect x="80" y="32" width="70" height="40" fill="#C8A156" />
+    <rect x="150" y="32" width="60" height="40" fill="#C8A156" />
+    <rect x="210" y="32" width="70" height="40" fill="#C8A156" />
+    <rect x="280" y="32" width="60" height="40" fill="#C8A156" />
+    <rect x="340" y="32" width="90" height="40" fill="#C8A156" />
+    <rect x="430" y="32" width="40" height="40" fill="#FF7A45" />
+    <text x="0" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">ROE</text>
+    <text x="80" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">Debt</text>
+    <text x="150" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">Earnings</text>
+    <text x="220" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">Margin</text>
+    <text x="290" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">Insider</text>
+    <text x="360" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">R&D</text>
+    <text x="440" y="20" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">Penalty</text>
+    <text x="0" y="100" fill="#F8FAFC" font-family="Inter, system-ui" font-size="14" font-weight="600">Total: 68 (base 25 + flags 43 − penalty 0)</text>
+  </g>
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="260" viewBox="0 0 640 260" role="img" aria-label="Ledger rows preview">
+  <rect width="640" height="260" fill="#0B1220" rx="12" />
+  <text x="32" y="40" fill="#F8FAFC" font-family="Inter, system-ui" font-size="16" font-weight="600">Ledger rows preview</text>
+  <g transform="translate(32,60)">
+    <rect width="576" height="150" fill="#111827" rx="8" />
+    <text x="12" y="26" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">ts</text>
+    <text x="140" y="26" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">ticker</text>
+    <text x="240" y="26" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">qty</text>
+    <text x="320" y="26" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">price</text>
+    <text x="420" y="26" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">fee (bp)</text>
+    <line x1="0" y1="32" x2="576" y2="32" stroke="#A9B2C3" stroke-width="1" opacity="0.4" />
+    <text x="12" y="58" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">2025-06-27T15:30Z</text>
+    <text x="140" y="58" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">VTI</text>
+    <text x="240" y="58" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">+120</text>
+    <text x="320" y="58" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">$224.34</text>
+    <text x="420" y="58" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">12</text>
+
+    <text x="12" y="84" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">2025-06-20T15:30Z</text>
+    <text x="140" y="84" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">IEFA</text>
+    <text x="240" y="84" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">-110</text>
+    <text x="320" y="84" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">$70.12</text>
+    <text x="420" y="84" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">12</text>
+
+    <text x="12" y="110" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">2025-06-13T15:30Z</text>
+    <text x="140" y="110" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">GLD</text>
+    <text x="240" y="110" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">+40</text>
+    <text x="320" y="110" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">$188.10</text>
+    <text x="420" y="110" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">12</text>
+
+    <text x="12" y="136" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">2025-06-06T15:30Z</text>
+    <text x="140" y="136" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">BND</text>
+    <text x="240" y="136" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">+200</text>
+    <text x="320" y="136" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">$75.44</text>
+    <text x="420" y="136" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">12</text>
+
+    <text x="12" y="162" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">2025-05-30T15:30Z</text>
+    <text x="140" y="162" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">BTC-USD</text>
+    <text x="240" y="162" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">-0.45</text>
+    <text x="320" y="162" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">$62350</text>
+    <text x="420" y="162" fill="#F8FAFC" font-family="IBM Plex Mono, monospace" font-size="12">12</text>
+  </g>
+</svg>

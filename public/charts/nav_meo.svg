@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="NAV (MEΩ), 2015–2025">
+  <rect width="640" height="360" fill="#0B1220" rx="12" />
+  <g transform="translate(48,32)">
+    <rect width="544" height="280" fill="#111827" rx="8" />
+    <path d="M0 240 L60 232 L120 220 L180 210 L240 200 L300 170 L360 140 L420 110 L480 90 L544 60" fill="none" stroke="#C8A156" stroke-width="4" stroke-linecap="round" />
+    <path d="M0 240 L544 240" stroke="#A9B2C3" stroke-width="1.5" stroke-dasharray="4 6" />
+    <path d="M0 180 L544 180" stroke="#A9B2C3" stroke-width="1" stroke-dasharray="4 6" />
+    <path d="M0 120 L544 120" stroke="#A9B2C3" stroke-width="1" stroke-dasharray="4 6" />
+    <path d="M0 60 L544 60" stroke="#A9B2C3" stroke-width="1" stroke-dasharray="4 6" />
+    <text x="0" y="304" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">2015</text>
+    <text x="508" y="304" fill="#A9B2C3" font-family="IBM Plex Mono, monospace" font-size="12">2025</text>
+    <text x="-12" y="12" fill="#C8A156" font-family="Inter, system-ui" font-size="12" text-anchor="end">NAV (MEΩ)</text>
+  </g>
+</svg>

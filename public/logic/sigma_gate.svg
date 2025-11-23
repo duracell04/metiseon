@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="320" viewBox="0 0 640 320" role="img" aria-label="σ histogram (median in orange, chosen in green)">
+  <rect width="640" height="320" fill="#0B1220" rx="12" />
+  <text x="32" y="36" fill="#F8FAFC" font-family="Inter, system-ui" font-size="16" font-weight="600">σ histogram (median in orange, chosen in green)</text>
+  <g transform="translate(32,60)">
+    <rect x="0" y="40" width="520" height="200" fill="#111827" rx="8" />
+    <rect x="40" y="180" width="40" height="60" fill="#A9B2C3" />
+    <rect x="120" y="140" width="40" height="100" fill="#A9B2C3" />
+    <rect x="200" y="120" width="40" height="120" fill="#A9B2C3" />
+    <rect x="280" y="80" width="40" height="160" fill="#A9B2C3" />
+    <rect x="360" y="140" width="40" height="100" fill="#A9B2C3" />
+    <rect x="440" y="200" width="40" height="40" fill="#A9B2C3" />
+    <line x1="260" y1="40" x2="260" y2="240" stroke="#FF7A45" stroke-width="3" stroke-dasharray="6 6" />
+    <line x1="210" y1="40" x2="210" y2="240" stroke="#2ECC71" stroke-width="3" />
+    <text x="250" y="260" fill="#FF7A45" font-family="IBM Plex Mono, monospace" font-size="12">median σ</text>
+    <text x="182" y="260" fill="#2ECC71" font-family="IBM Plex Mono, monospace" font-size="12">chosen σ</text>
+  </g>
+</svg>
