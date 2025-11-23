@@ -1,30 +1,33 @@
-import { Header } from "@/components/Header";
+﻿import { Header } from "@/components/Header";
 
 const sections = [
   {
     title: "Data",
-    content: "Adj Close & Volume (Yahoo), fundamentals (AV demo), benchmarks (FRED), crypto caps (CoinGecko). 24h cache; �%1-day forward fill.",
+    content:
+      "Adj Close & Volume (Yahoo), fundamentals (AV demo), benchmarks (FRED), crypto caps (CoinGecko). 24h cache; +/-1-day forward fill.",
   },
   {
     title: "Score (Durability-Lite)",
-    content: "Binary, explainable rules: ROE > 12, D/E < 1, Margin > 10, Insider > 2, R&D/Rev > 5, penalty for levered/low-skin. Score 0�?"100.",
+    content:
+      "Binary, explainable rules: ROE > 12, D/E < 1, Margin > 10, Insider > 2, R&D/Rev > 5, penalty for levered/low-skin. Score 0-100.",
   },
   {
     title: "Risk",
-    content: "I� via GARCH(1,1) on MEIc-relative returns. CVaR for reporting.",
+    content: "IV via GARCH(1,1) on MEIc-relative returns. CVaR for reporting.",
   },
   {
     title: "Allocation",
-    content: "Drop last winner �+' I� �% median �+' arg-max score �+' tie �+' lower I�.",
+    content: "Drop last winner; prefer lower IV; median filter; choose highest score; tie-breaker uses lower IV.",
   },
   {
     title: "Cost gate",
-    content: "Fee 12 bp + �^simpact; skip if > cap (default 35 bp).",
+    content: "Fee 12 bp + estimated slippage; skip trade if > cap (default 35 bp).",
   },
   {
-    title: "NumAcraire & GINI�",
-    content: "Everything can be expressed in MEIc; performance as GINI�: ((1 + R) / (1 + r_IRS + I?_MEIc)) �^' 1 �^' carry.",
-    formula: "GINI� = ((1 + R) / (1 + r_IRS + I?_MEIc)) �^' 1 �^' carry",
+    title: "Numeraire & GINI",
+    content:
+      "Everything is expressed in MEIc; performance reported as GINI: ((1 + R) / (1 + r_IRS + I_MEIc)) - 1 - carry.",
+    formula: "GINI = ((1 + R) / (1 + r_IRS + I_MEIc)) - 1 - carry",
   },
 ];
 
